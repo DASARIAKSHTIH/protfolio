@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Akshith Dasari — AI/ML Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-void: #070b14;
+    --bg-panel: #0d1420;
+    --bg-panel-2: #111a29;
+    --line: rgba(148,178,214,0.14);
+    --text-hi: #eaf1fb;
+    --text-mid: #9fb0c8;
+    --text-low: #5d6d85;
+    --cyan: #52e0d8;
+    --cyan-dim: rgba(82,224,216,0.14);
+    --amber: #f0b74a;
+    --violet: #8c8ff0;
+    --radius: 14px;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--bg-void);
+    color: var(--text-hi);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  ::selection{ background: var(--cyan); color: #04110f; }
+
+  a{ color: inherit; text-decoration:none; }
+
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  h1,h2,h3,.display{
+    font-family:'Sora', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* ---------- background canvas ---------- */
+  #netCanvas{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.55;
+  }
+
+  .grain{
+    position: fixed;
+    inset:0;
+    z-index: 1;
+    pointer-events:none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .content{ position:relative; z-index:2; }
+
+  /* ---------- layout shells ---------- */
+  section{
+    padding: 120px 8vw;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  @media (max-width: 720px){
+    section{ padding: 80px 6vw; }
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .eyebrow::before{
+    content:"";
+    width: 26px; height: 1px;
+    background: var(--cyan);
+  }
+
+  /* ---------- nav ---------- */
+  nav{
+    position: fixed;
+    top:0; left:0; right:0;
+    z-index: 50;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 22px 8vw;
+    backdrop-filter: blur(14px);
+    background: rgba(7,11,20,0.55);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .logo{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 1rem;
+    color: var(--text-hi);
+  }
+  nav .logo span{ color: var(--cyan); }
+  nav ul{
+    list-style:none;
+    display:flex;
+    gap: 34px;
+  }
+  nav ul li a{
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    transition: color 0.25s ease;
+    position:relative;
+  }
+  nav ul li a:hover{ color: var(--text-hi); }
+  nav ul li a::after{
+    content:"";
+    position:absolute;
+    left:0; bottom:-6px;
+    width:0; height:1px;
+    background: var(--cyan);
+    transition: width 0.25s ease;
+  }
+  nav ul li a:hover::after{ width:100%; }
+  @media (max-width: 720px){
+    nav ul{ display:none; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height: 100vh;
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    padding-top: 120px;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.3fr 0.9fr;
+    gap: 60px;
+    align-items:center;
+  }
+  @media (max-width: 900px){
+    .hero-grid{ grid-template-columns: 1fr; }
+  }
+
+  .hero h1{
+    font-size: clamp(2.6rem, 6vw, 4.4rem);
+    line-height: 1.05;
+    margin-bottom: 22px;
+  }
+  .hero h1 .grad{
+    background: linear-gradient(100deg, var(--cyan), var(--violet) 70%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p.lead{
+    font-size: 1.08rem;
+    color: var(--text-mid);
+    max-width: 46ch;
+    line-height: 1.65;
+    margin-bottom: 36px;
+  }
+
+  .cta-row{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom: 46px; }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding: 13px 24px;
+    border-radius: 100px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.25s ease;
+    border: 1px solid transparent;
+    cursor:pointer;
+  }
+  .btn-primary{
+    background: var(--cyan);
+    color: #04140f;
+  }
+  .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 10px 30px -8px var(--cyan); }
+  .btn-ghost{
+    border-color: var(--line);
+    color: var(--text-hi);
+  }
+  .btn-ghost:hover{ border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
+
+  .contact-chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 12px;
+  }
+  .chip{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding: 9px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    font-size: 0.8rem;
+    color: var(--text-mid);
+    font-family:'JetBrains Mono', monospace;
+    transition: all 0.25s ease;
+    background: rgba(255,255,255,0.02);
+  }
+  .chip:hover{
+    border-color: var(--cyan);
+    color: var(--text-hi);
+    background: var(--cyan-dim);
+    transform: translateY(-2px);
+  }
+  .chip svg{ width:14px; height:14px; flex-shrink:0; }
+
+  /* ---------- 3D tilt card (hero signature element) ---------- */
+  .tilt-wrap{ perspective: 1200px; }
+  .id-card{
+    background: linear-gradient(155deg, var(--bg-panel-2), var(--bg-panel) 60%);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 34px;
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+    box-shadow: 0 30px 60px -30px rgba(0,0,0,0.7);
+    position: relative;
+    overflow:hidden;
+  }
+  .id-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle at var(--mx,50%) var(--my,20%), rgba(82,224,216,0.14), transparent 55%);
+    pointer-events:none;
+  }
+  .id-card .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    margin-bottom: 18px;
+    display:block;
+  }
+  .id-card .role{
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+  }
+  .id-card .sub{ color: var(--text-mid); font-size: 0.88rem; margin-bottom: 26px; }
+  .id-card .stack{
+    display:flex; flex-wrap:wrap; gap:8px; transform: translateZ(30px);
+  }
+  .id-card .stack span{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    color: var(--text-mid);
+  }
+  .id-card .pulse-dot{
+    width:8px; height:8px; border-radius:50%;
+    background: var(--cyan);
+    display:inline-block;
+    margin-right:8px;
+    box-shadow: 0 0 0 0 rgba(82,224,216,0.7);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(82,224,216,0.55); }
+    70%{ box-shadow: 0 0 0 10px rgba(82,224,216,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(82,224,216,0); }
+  }
+  .id-card .status{
+    display:flex; align-items:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-mid);
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* ---------- section headers ---------- */
+  .sec-head{ margin-bottom: 56px; max-width: 60ch; }
+  .sec-head h2{ font-size: clamp(1.8rem, 3.4vw, 2.5rem); }
+  .sec-head p{ color: var(--text-mid); margin-top: 14px; line-height:1.6; }
+
+  /* ---------- about / education timeline ---------- */
+  .timeline{
+    display:flex;
+    flex-direction:column;
+    gap: 0;
+    border-left: 1px solid var(--line);
+    margin-left: 6px;
+  }
+  .t-item{
+    position: relative;
+    padding: 0 0 46px 32px;
+  }
+  .t-item:last-child{ padding-bottom:0; }
+  .t-item::before{
+    content:"";
+    position:absolute;
+    left:-6.5px; top:4px;
+    width:12px; height:12px;
+    border-radius:50%;
+    background: var(--bg-void);
+    border: 2px solid var(--cyan);
+  }
+  .t-item .t-year{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--cyan);
+    margin-bottom: 6px;
+  }
+  .t-item h3{ font-size: 1.15rem; margin-bottom: 6px; font-weight:600; }
+  .t-item p{ color: var(--text-mid); font-size: 0.92rem; line-height:1.6; }
+
+  /* ---------- skills ---------- */
+  .skills-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    gap: 18px;
+  }
+  .skill-card{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    transform-style: preserve-3d;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .skill-card:hover{ border-color: rgba(82,224,216,0.4); }
+  .skill-card .sh{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .skill-card h3{ font-size: 1rem; font-weight:600; }
+  .skill-card .lvl{ font-family:'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-low); }
+  .bar{
+    height: 5px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    overflow:hidden;
+  }
+  .bar i{
+    display:block;
+    height:100%;
+    background: linear-gradient(90deg, var(--cyan), var(--violet));
+    border-radius: 10px;
+    width: 0%;
+    transition: width 1.2s cubic-bezier(.2,.8,.2,1);
+  }
+  .skill-card p{ color: var(--text-mid); font-size: 0.82rem; margin-top: 14px; line-height:1.5; }
+
+  /* ---------- certificates ---------- */
+  .cert-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+    gap: 20px;
+  }
+  .cert-card{
+    background: linear-gradient(160deg, var(--bg-panel-2), var(--bg-panel));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px;
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease-out, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .cert-card:hover{ border-color: rgba(240,183,74,0.5); box-shadow: 0 20px 40px -24px rgba(240,183,74,0.25); }
+  .cert-card .cnum{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--amber);
+    margin-bottom: 16px;
+    display:block;
+  }
+  .cert-card h3{ font-size: 1.05rem; margin-bottom: 8px; font-weight:600; }
+  .cert-card p{ color: var(--text-mid); font-size: 0.85rem; line-height: 1.55; }
+  .cert-card .issuer{
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-low);
+  }
+
+  /* ---------- contact ---------- */
+  .contact-panel{
+    background: linear-gradient(160deg, var(--bg-panel-2), var(--bg-panel));
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 60px 8vw;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .contact-panel h2{ font-size: clamp(1.8rem,4vw,2.8rem); margin-bottom: 18px; }
+  .contact-panel p{ color: var(--text-mid); max-width: 50ch; margin: 0 auto 40px; line-height:1.6; }
+  .contact-links{
+    display:flex; justify-content:center; flex-wrap:wrap; gap: 16px;
+  }
+
+  footer{
+    text-align:center;
+    padding: 40px 8vw 60px;
+    color: var(--text-low);
+    font-family:'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+
+  .reveal{
+    opacity:0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.in{ opacity:1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="netCanvas"></canvas>
+<div class="grain"></div>
+
+<div class="content">
+
+<nav>
+  <div class="logo">akshith<span>.dev</span></div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#certs">Certificates</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow">AI / ML Engineer in training</div>
+      <h1>Building at the edge of <span class="grad">code &amp; intelligence.</span></h1>
+      <p class="lead">I'm Akshith Dasari — a BTech student specializing in AI &amp; Machine Learning, with a diploma in AIML already behind me. I like turning raw fundamentals into working systems, one model at a time.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#contact">Get in touch</a>
+        <a class="btn btn-ghost" href="https://github.com/DASARIAKSHTIH" target="_blank" rel="noopener">View GitHub</a>
+      </div>
+      <div class="contact-chips">
+        <a class="chip" href="mailto:akshtihdasari3927@gmail.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="m4 4 8 8 8-8"/></svg>
+          akshtihdasari3927@gmail.com
+        </a>
+        <a class="chip" href="tel:+917997227115">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+          +91 79972 27115
+        </a>
+        <a class="chip" href="https://www.linkedin.com/in/dasari-akshith-23304733b" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-.95 1.82-1.95 3.75-1.95 4 0 4.7 2.5 4.7 5.8V21h-4v-5.4c0-1.3 0-3-1.85-3-1.85 0-2.1 1.4-2.1 2.9V21H9z"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+
+    <div class="tilt-wrap">
+      <div class="id-card" id="idCard">
+        <span class="tag mono">// profile.json</span>
+        <div class="role">Akshith Dasari</div>
+        <div class="sub">AIML Undergraduate · Delhi, IN</div>
+        <div class="stack">
+          <span>C</span><span>Python</span><span>AWS</span><span>HTML</span><span>CSS</span>
+        </div>
+        <div class="status">
+          <span class="pulse-dot"></span> Open to internships &amp; collaborations
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / EDUCATION -->
+<section id="about">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Background</div>
+    <h2>Education &amp; trajectory</h2>
+    <p>From a diploma foundation to a full BTech specialization — steadily building toward applied AI/ML engineering.</p>
+  </div>
+  <div class="timeline reveal">
+    <div class="t-item">
+      <div class="t-year mono">In progress</div>
+      <h3>BTech, Artificial Intelligence &amp; Machine Learning</h3>
+      <p>Currently pursuing a Bachelor's degree with a specialization in AIML, deepening core CS fundamentals alongside applied machine learning coursework.</p>
+    </div>
+    <div class="t-item">
+      <div class="t-year mono">Completed</div>
+      <h3>Diploma in AIML</h3>
+      <p>Built a foundation in artificial intelligence and machine learning concepts, setting up the base for the current degree program.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Toolkit</div>
+    <h2>Core skills</h2>
+    <p>Fundamentals across programming, web, and cloud — the building blocks for AI/ML systems work.</p>
+  </div>
+  <div class="skills-grid reveal">
+    <div class="skill-card">
+      <div class="sh"><h3>C</h3><span class="lvl">BASICS</span></div>
+      <div class="bar"><i data-w="45"></i></div>
+      <p>Core procedural programming and problem-solving fundamentals.</p>
+    </div>
+    <div class="skill-card">
+      <div class="sh"><h3>Python</h3><span class="lvl">BASICS</span></div>
+      <div class="bar"><i data-w="45"></i></div>
+      <p>Primary language for scripting and AI/ML coursework.</p>
+    </div>
+    <div class="skill-card">
+      <div class="sh"><h3>AWS</h3><span class="lvl">BASICS</span></div>
+      <div class="bar"><i data-w="45"></i></div>
+      <p>Cloud fundamentals, reinforced through a dedicated 6-month program.</p>
+    </div>
+    <div class="skill-card">
+      <div class="sh"><h3>HTML</h3><span class="lvl">BASICS</span></div>
+      <div class="bar"><i data-w="45"></i></div>
+      <p>Structuring content for the web.</p>
+    </div>
+    <div class="skill-card">
+      <div class="sh"><h3>CSS</h3><span class="lvl">BASICS</span></div>
+      <div class="bar"><i data-w="45"></i></div>
+      <p>Styling and responsive layout fundamentals — used to build this very page.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATES -->
+<section id="certs">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Credentials</div>
+    <h2>Certificates</h2>
+    <p>Focused programs completed to build practical, job-relevant knowledge.</p>
+  </div>
+  <div class="cert-grid reveal">
+    <div class="cert-card">
+      <span class="cnum mono">CERT / 01</span>
+      <h3>Cyber Security — 1 Day Program</h3>
+      <p>Intensive one-day program covering core cyber security concepts and awareness.</p>
+      <div class="issuer">ISSUED BY · SVGLOBAL SERVICES</div>
+    </div>
+    <div class="cert-card">
+      <span class="cnum mono">CERT / 02</span>
+      <h3>AWS &amp; AIML — 6 Month Program</h3>
+      <p>Extended program covering AWS cloud fundamentals alongside artificial intelligence and machine learning concepts.</p>
+      <div class="issuer">ISSUED BY · SVGLOBAL SERVICES</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-panel reveal">
+    <div class="eyebrow" style="justify-content:center;">Let's connect</div>
+    <h2>Have a role, project, or idea in mind?</h2>
+    <p>I'm currently exploring internships and collaborative projects in AI/ML. Reach out — my inbox and LinkedIn are always open.</p>
+    <div class="contact-links">
+      <a class="btn btn-primary" href="mailto:akshtihdasari3927@gmail.com">Email me</a>
+      <a class="btn btn-ghost" href="https://www.linkedin.com/in/dasari-akshith-23304733b" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn btn-ghost" href="https://github.com/DASARIAKSHTIH" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2026 Akshith Dasari — built line by line.
+</footer>
+
+</div>
+
+<script>
+// ---------- particle network background ----------
+const canvas = document.getElementById('netCanvas');
+const ctx = canvas.getContext('2d');
+let w, h, particles;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function resize(){
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const COUNT = Math.min(70, Math.floor(window.innerWidth / 18));
+particles = Array.from({length: COUNT}, () => ({
+  x: Math.random()*w,
+  y: Math.random()*h,
+  vx: (Math.random()-0.5)*0.25,
+  vy: (Math.random()-0.5)*0.25
+}));
+
+function step(){
+  ctx.clearRect(0,0,w,h);
+  for(const p of particles){
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < 0 || p.x > w) p.vx *= -1;
+    if(p.y < 0 || p.y > h) p.vy *= -1;
+  }
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const a = particles[i], b = particles[j];
+      const dx = a.x-b.x, dy = a.y-b.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      if(dist < 150){
+        ctx.strokeStyle = `rgba(82,224,216,${0.16 * (1 - dist/150)})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(a.x,a.y);
+        ctx.lineTo(b.x,b.y);
+        ctx.stroke();
+      }
+    }
+  }
+  for(const p of particles){
+    ctx.fillStyle = 'rgba(82,224,216,0.6)';
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,1.6,0,Math.PI*2);
+    ctx.fill();
+  }
+  if(!reduceMotion) requestAnimationFrame(step);
+}
+step();
+
+// ---------- 3D tilt on id card ----------
+const card = document.getElementById('idCard');
+if(card && !reduceMotion){
+  card.addEventListener('mousemove', (e) => {
+    const r = card.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    const rx = ((y / r.height) - 0.5) * -14;
+    const ry = ((x / r.width) - 0.5) * 14;
+    card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+    card.style.setProperty('--mx', `${(x/r.width)*100}%`);
+    card.style.setProperty('--my', `${(y/r.height)*100}%`);
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = 'rotateX(0) rotateY(0)';
+  });
+}
+
+// tilt for skill/cert cards (lighter effect)
+document.querySelectorAll('.skill-card, .cert-card').forEach(el => {
+  if(reduceMotion) return;
+  el.addEventListener('mousemove', (e) => {
+    const r = el.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    const rx = ((y / r.height) - 0.5) * -6;
+    const ry = ((x / r.width) - 0.5) * 6;
+    el.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+  });
+  el.addEventListener('mouseleave', () => {
+    el.style.transform = 'rotateX(0) rotateY(0)';
+  });
+});
+
+// ---------- scroll reveal ----------
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('in');
+      io.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+revealEls.forEach(el => io.observe(el));
+
+// ---------- skill bar fill on scroll ----------
+const bars = document.querySelectorAll('.bar i');
+const barIo = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const bar = entry.target;
+      bar.style.width = bar.dataset.w + '%';
+      barIo.unobserve(bar);
+    }
+  });
+}, { threshold: 0.4 });
+bars.forEach(b => barIo.observe(b));
+</script>
+
+</body>
+</html>
